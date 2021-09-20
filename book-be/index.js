@@ -58,11 +58,11 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: async (root, args) => {
-      const books = await Book.find({}).populate('author')
-      return books
-        .filter(book => args.author ? book.author === args.author : true)
-        .filter(book => args.genre ? book.genres.includes(args.genre) : true)
+    allBooks: (root, args) => {
+      const query = {}
+      // if (args.author) ...
+      if (args.genre) query.genres = { '$in': [ args.genre ] }
+      return Book.find(query).populate('author')
     },
     allAuthors: () => Author.find({}),
   },
